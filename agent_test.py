@@ -228,7 +228,7 @@ class Project1Test(unittest.TestCase):
         return agentUT, board
 
     @timeout(5)
-    @unittest.skip("Skip eval function test.")  # Uncomment this line to skip test
+    # @unittest.skip("Skip eval function test.")  # Uncomment this line to skip test
     def test_heuristic(self):
         """ Test output interface of heuristic score function interface."""
 
