@@ -225,7 +225,7 @@ class CustomPlayer:
 
         return best_score, best_move
 
-    def alphabeta(self, game, depth, alpha=float("-inf"), beta=float("inf"), maximizing_player=True):
+    def alphabeta(self, game, depth, alpha=float("-inf"), beta=float("inf"), maximizing_player=True, player=None):
         """Implement minimax search with alpha-beta pruning as described in the
         lectures.
 
@@ -263,8 +263,46 @@ class CustomPlayer:
                 to pass the project unit tests; you cannot call any other
                 evaluation function directly.
         """
+        " DEBUG "
+        #print(("\t" * (5 - depth)), "Alphabeta called at depth ", depth)
+        " /DEBUG "
+
+        if player == None:
+            player = game.active_player
+
+        best_move = (-1, -1)
+        if maximizing_player:
+            best_score = float("-inf")
+        else:
+            best_score = float("inf")
+
+        for move in game.get_legal_moves():
+            " DEBUG "
+            #print(("\t" * (5 - depth)), "At depth ", depth, " trying move ", move)
+            " /DEBUG "
+
+            new_game = game.forecast_move(move)
+            if depth <= 1:
+                score = self.score(new_game, player)
+            else:
+                score, next_move = self.minimax(new_game, depth - 1, not maximizing_player, player)
+
+            " DEBUG "
+            #print(("\t" * (5 - depth)), "At depth ", depth, " tried move ", move, " score is ", score)
+            " /DEBUG "
+ 
+            if maximizing_player and score > best_score:
+                best_score = score
+                best_move = move
+            elif (not maximizing_player) and score < best_score:
+                best_score = score
+                best_move = move
+
+            " DEBUG "
+            #print(("\t" * (5 - depth)), "best_score is ", best_score, " and best_move is ", best_move)
+            " /DEBUG "
+
         if self.time_left() < self.TIMER_THRESHOLD:
             raise Timeout()
 
-        # TODO: finish this function!
-        raise NotImplementedError
+        return best_score, best_move
