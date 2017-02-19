@@ -131,12 +131,10 @@ class CustomPlayer:
 
         try:
             for depth in range(1, 9):
-                print("Trying depth ",depth)
                 score, move = self.minimax(game, depth)
 
                 "DEBUG"
-                print("Found score ", score, " for move ", move)
-
+                #print("Found score ", score, " for move ", move)
                 "/DEBUG"
                 
                 if score > best_score:
@@ -278,28 +276,35 @@ class CustomPlayer:
 
         for move in game.get_legal_moves():
             " DEBUG "
-            #print(("\t" * (5 - depth)), "At depth ", depth, " trying move ", move)
+            #print(("\t" * (5 - depth)), "At depth ", depth, " best score ", best_score, " trying move ", move, " with alpha ", alpha, " and beta ", beta)
             " /DEBUG "
 
             new_game = game.forecast_move(move)
             if depth <= 1:
                 score = self.score(new_game, player)
             else:
-                score, next_move = self.minimax(new_game, depth - 1, not maximizing_player, player)
+                score, next_move = self.alphabeta(new_game, depth - 1, alpha, beta, not maximizing_player, player)
 
             " DEBUG "
-            #print(("\t" * (5 - depth)), "At depth ", depth, " tried move ", move, " score is ", score)
+            #print(("\t" * (5 - depth)), "At depth ", depth, " tried move ", move, " score is ", score, " with alpha ", alpha, " and beta ", beta)
             " /DEBUG "
  
-            if maximizing_player and score > best_score:
+            if maximizing_player and score >= best_score:
+                alpha = score
                 best_score = score
                 best_move = move
-            elif (not maximizing_player) and score < best_score:
+            elif (not maximizing_player) and score <= best_score:
+                beta = score
                 best_score = score
                 best_move = move
 
+            if maximizing_player and best_score >= beta:
+                break
+            elif (not maximizing_player) and best_score <= alpha:
+                break
+
             " DEBUG "
-            #print(("\t" * (5 - depth)), "best_score is ", best_score, " and best_move is ", best_move)
+            #print(("\t" * (5 - depth)), "best_score is ", best_score, " and best_move is ", best_move, " with alpha ", alpha, " and beta ", beta)
             " /DEBUG "
 
         if self.time_left() < self.TIMER_THRESHOLD:
